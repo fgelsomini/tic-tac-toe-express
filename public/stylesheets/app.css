@@ -1,0 +1,65 @@
+body {
+  background-color: #000;
+  color: rgb(61, 219, 11); 
+  font-family: 'VT323', sans-serif;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+table {
+  border-spacing: 0;
+  border: 3px solid #ccc;
+  margin: auto;
+}
+td {
+  font-family: 'Lato', sans-serif;
+  border: 3px solid #ccc;
+  width: 150px;
+  height: 150px;
+  text-align: center;
+  font-size: 110px;
+  color: #ccc;
+}
+.magic-square-number {
+  color: #222;
+}
+#sub-container {
+  margin: auto;
+  text-align: center;
+}
+.top-margin {
+  margin-top: 200px;
+}
+.prompter-left, .prompter-right {
+  display: inline-block;
+}
+.prompter-left {
+  width: 100px;
+  text-align: right;
+}
+.prompter-right {
+  width: 400px;
+  text-align: left;
+}
+.overlay {
+  position: absolute;
+  z-index: 99;
+  left: 335px;
+  padding: 40px;
+  background-color: #000;
+  border: 1px solid greenyellow;
+  width: 510px;
+  height: 120px;
+}
+.hide {
+  display: none;
+}
+.user-input {
+  background-color: #000;
+  color: rgb(61, 219, 11);
+  border: none;
+  outline: none;
+  font-size: 20px;
+  font-family: inherit;
+  text-transform: uppercase;
+  margin-left: -1px;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>W.O.P.R. Tic Tac Toe</title>
+    <meta name="description" content="Retro silliness.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>    
+    <link href="/stylesheets/app.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div id="main-container">
+      <div id="sub-container">
+        <div id="prompter" class="top-margin"></div>
+        <div id="game-grid" class="hide">
+          <p id="title">Tic Tac Toe</p>
+          <p id="game-message"></p>
+          <p id="next-move"></p>
+          <table>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>    
+        </div>
+      </div>
+    </div>
+
+    <div class="template hide">
+      <div class="wopr-row">
+        <div class="prompter-left"></div>
+        <div class="prompter-right"></div>
+      </div>
+      <div class="user-row">
+        <div class="prompter-left"><span class="wopr-prompt">></span></div>
+        <div class="prompter-right"></div>
+      </div>    
+      <span class="cursor">
+        <input type="text" class="user-input"></span>
+      </span>
+      <span id="greeting">Greetings Professor Falken.</span>
+      <span id="play">Shall we play a game?</span>
+      <span id="play-what">What would you like to play?</span>
+      <span id="players">Number of players:</span>
+      <span id="chess">Perhaps later we can play a nice game of chess.</span>
+      <span id="goodbye">Good bye.</span>
+      <span id="player-1-wins">Player 1 wins.</span>
+      <span id="player-2-wins">Player 2 wins.</span>
+      <span id="draw">Stalemate.</span>      
+      <span id="again">Shall we play again?</span>
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="assets/js/jquery-1.8.2.min.js"><\/script>')</script>
+    <script src="js/util.js"></script>
+    <script src="js/app.js"></script>
+
+  </body>
+</html>
