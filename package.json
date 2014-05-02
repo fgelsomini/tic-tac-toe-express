@@ -2,7 +2,7 @@
   "name": "tic-tac-toe",
   "description": "tic tac toe example",
   "version": "0.0.1",
-  "private": true,
+  "main": "app.js",
   "dependencies": {
     "express": "4.1.1"
   },
