@@ -46,7 +46,6 @@ $(document).ready(function() {
   }
 
   function handleUserInput(response, responseTo) {
-    console.log(responseTo + " " + response)
     switch(responseTo) {
       case("play"):
         pattern = /yes|sure|/g;
@@ -65,7 +64,7 @@ $(document).ready(function() {
         }     
         break;         
       case("players"):
-        pattern = /1|2/g
+        pattern = /0|1|2/g
         if (pattern.test(response)) {
           initializeGame(Number(response));
         }     
@@ -93,37 +92,41 @@ $(document).ready(function() {
 
   // GAME CODE
 
-  var turn;
-  var gridSize = 9;
+  var game = {
+    turn: 1,
+    players: 1,
+    gridSize: 9
+  }
 
   function initializeGame(players) {
-    turn = 1;
-    var players = players || 1;
+    game.players = players;
+    game.turn = 1;
     $('#prompter').removeClass('top-margin');
     clearPrompter();    
     $('#title').text("tic tac toe - " + players + " player game");
-    $('#game-message').text("Player " + playerName(players) + " turn");
+    $('#game-message').text(playerName() + " turn");
     drawGrid();
+    checkGameStatus('X', players);
     $('td').click(function() {
-      if (turn % 2 === 0) {
+      if (game.turn % 2 === 0) {
         var mark = 'O';
       } else {
         var mark = 'X';
       }
       $(this).text(mark);
       $(this).off('click');
-      turn ++;
-      $('#game-message').text("Player " + playerName(players) + " turn");      
+      game.turn ++;
+      $('#game-message').text(playerName() + " turn");      
       checkGameStatus(mark, players);
-    });    
+    });          
   }   
 
   function playerName() {
     var name;
-    if (players == 1) {
-      name = turn % 2 === 0 ? 2 : "Computer";      
+    if (game.players == 1) {
+      name = game.turn % 2 === 0 ? 'Computer' : 'Player 1';      
     } else {
-      name = turn % 2 === 0 ? 2 : 1;      
+      name = game.turn % 2 === 0 ? 'Player 2' : 'Player 1';      
     }
     return name;
   }     
@@ -144,11 +147,10 @@ $(document).ready(function() {
     $('#game-grid').show();
   }
 
-  function checkGameStatus(mark, players) {
+  function checkGameStatus(mark) {
     var winningCombination = checkForWinner(mark);
     if (winningCombination.length > 0) {
       for(var i=0; i<winningCombination.length;i++) {
-        console.log(winningCombination[i]);
         var magicSquare = $('td[data-magic-number=' + winningCombination[i] + ']');
         magicSquare.css("background-color", "white");
       }      
@@ -156,16 +158,18 @@ $(document).ready(function() {
     } else {
       unplayedCells = getUnplayedCells();
       if (unplayedCells.length > 0) {
-        calculateNextMove(mark);
+        var nextMark = mark === 'X' ? 'O' : 'X';
+        if (game.players === 0) {
+          setTimeout(function() {computerTurn(nextMark, game.players); },500);
+        } else if (game.players === 1 && game.turn > 1 && mark === 'X') {
+          setTimeout(function() {computerTurn(nextMark, game.players); },500);
+        } else {
+          var bestMove = calculateNextMove(nextMark);  
+        }        
       } else {
-        printGameSummary("draw");
+        printGameSummary("draw");    
       }
     } 
-    if (players === 1 && mark === 'X') {
-      setTimeout(function() {
-        computerTurn();
-      },500);
-    }    
   }
 
   function checkForWinner(mark) {
@@ -190,12 +194,12 @@ $(document).ready(function() {
     var opponentCombinations = permutate(playedCellsOpponent,2);
     var unplayedCells = getUnplayedCells();
     // check for center if less than 2 squares have been played
-    if (turn < 3 && unplayedCells.indexOf(5) > 0) {
+    if (game.turn > 1 && unplayedCells.indexOf(5) > 0) {
       bestPossibleMoves.push(5);
-    } 
+    }     
     // check for win
     for (var i=0;i<playerCombinations.length;i++) {
-      magicSquare = 15 - sumArray(playerCombinations[i]);
+      var magicSquare = 15 - sumArray(playerCombinations[i]);
       if (unplayedCells.indexOf(magicSquare) > 0) {
         bestPossibleMoves.push(magicSquare);  
       }        
@@ -203,21 +207,29 @@ $(document).ready(function() {
     // check for block
     if (bestPossibleMoves.length === 0) {
       for (var i=0;i<opponentCombinations.length;i++) {
-        magicSquare = 15 - sumArray(opponentCombinations[i]);
-        if (unplayedCells.indexOf(magicSquare) > 0) {
+       var magicSquare = 15 - sumArray(opponentCombinations[i]);
+        if (unplayedCells.indexOf(magicSquare) !== -1) {
           bestPossibleMoves.push(magicSquare);
         }        
       }
     }
+    // guard against triangle
+    if (bestPossibleMoves.length === 0) {
+      for (var i=0;i<unplayedCells.length;i++) {
+        if (unplayedCells[i] % 2 === 0) {
+          bestPossibleMoves.push(unplayedCells[i]);
+        }        
+      }
+    }    
     // check for open square
     if (bestPossibleMoves.length === 0) {
-      bestPossibleMoves = bestPossibleMoves.concat(unplayedCells);
-    }      
+      bestPossibleMoves.push(pluckArray(unplayedCells));
+    }  
     return bestPossibleMoves[0];
   }  
 
-  function computerTurn() {
-    var bestPossibleMove = calculateNextMove('O');
+  function computerTurn(mark, players) {
+    var bestPossibleMove = calculateNextMove(mark);
     $('td[data-magic-number=' + bestPossibleMove + ']').click();
   }
 
@@ -252,7 +264,7 @@ $(document).ready(function() {
   }
 
   function printGameSummary(status) {
-    var player = turn % 2 === 0 ? 1 : 2;    
+    var player = game.turn % 2 === 0 ? 1 : 2;    
     $('td').off('click');
     $('#prompter').hide();
     $('#prompter').addClass('top-margin');
