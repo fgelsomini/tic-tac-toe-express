@@ -1,27 +1,54 @@
+// DONE: Precompute speech.
+// FAIL: printWopr and the <audio> tag should be linked (both take the same time).
+// DONE: Add a longer pause after each message is displayed.
+// TODO: Use "speak"'s callback to chain together printWoprs, instead of using timeouts with magic numbers.
+
+// <audio> tag docs:
+//   https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
+
 $(document).ready(function() {
 
-  setTimeout(function() { printWopr('greeting'); },1000);
-  setTimeout(function() { printWopr('play'); },2000);
-  setTimeout(function() { printPrompt(); },3000);
+  time_callback = function(event) {
+    console.log(event.target.currentTime);
+  };
 
-  function printWopr(message) {
+  speak('', function() { 
+    setTimeout(function() { printWopr('greeting'); },500);
+    setTimeout(function() { printWopr('play'); },2800);
+    setTimeout(function() { printPrompt(); },5000);
+  });
+
+
+  function printWopr(message, finished_callback) {
     var row = $('.template .wopr-row');
     var text = $('#' + message).text();
+
     var textArray = text.split('');
     var counter = 0;
     row.clone().appendTo($('#prompter'));
-    (function printText() {
-      setTimeout(function() {
-        if (counter < textArray.length) {
-          $('#prompter .prompter-right').last().attr('data-message-type',message);  
-          $('#prompter .prompter-right').last().append(textArray[counter]);  
-          counter ++;
-          printText();                
-        } else {
-          $('#prompter .prompter-right').last().append('<br/><br/>');  
-        }
-      }, 20); 
-    })();        
+
+    function speak_callback(player) { 
+      var printDelay = (player.seconds * 1000) / textArray.length;
+
+      var printText = function(player) {
+        setTimeout(function() {
+          if (counter < textArray.length) {
+            $('#prompter .prompter-right').last().attr('data-message-type',message);  
+            $('#prompter .prompter-right').last().append(textArray[counter]);  
+            counter ++;
+            printText();                
+          } else {
+            $('#prompter .prompter-right').last().append('<br/><br/>');
+            // finished_callback();
+          }
+        }, printDelay);
+      };
+
+      player.play();
+      printText();
+    }
+
+    speak(text, speak_callback);
   }
 
   function printPrompt() {
@@ -52,7 +79,7 @@ $(document).ready(function() {
         if (pattern.test(response)) {
           clearPrompter();
           setTimeout(function() { printWopr('play-what'); },0);
-          setTimeout(function() { printPrompt(); },1000);
+          setTimeout(function() { printPrompt(); },2800);
         }     
         break;   
       case("play-what"):
@@ -60,7 +87,7 @@ $(document).ready(function() {
         if (pattern.test(response)) {
           clearPrompter();
           setTimeout(function() { printWopr('players'); },0);
-          setTimeout(function() { printPrompt(); },500);
+          setTimeout(function() { printPrompt(); },2000);
         }     
         break;         
       case("players"):
@@ -75,7 +102,7 @@ $(document).ready(function() {
           $('#game-grid').hide();
           clearPrompter();
           setTimeout(function() { printWopr('players'); },0);
-          setTimeout(function() { printPrompt(); },1000);
+          setTimeout(function() { printPrompt(); },2000);
         }     
         break;
       default: 
@@ -276,8 +303,8 @@ $(document).ready(function() {
       $('td').css("background-color", "white");
       setTimeout(function() { printWopr('draw'); }, 1200);
     }
-    setTimeout(function() { printWopr('again'); }, 2000);
-    setTimeout(function() { printPrompt(); },3000);
+    setTimeout(function() { printWopr('again'); }, 2800);
+    setTimeout(function() { printPrompt(); },4600);
     waitForInput();    
   }
 
